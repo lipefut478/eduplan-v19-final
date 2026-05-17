@@ -133,6 +133,24 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Partidas (jogos e scouting)
+CREATE TABLE IF NOT EXISTS partidas (
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  adversario    TEXT NOT NULL,
+  categoria     TEXT DEFAULT '',
+  data          DATE,
+  local         TEXT DEFAULT '',
+  tipo          TEXT DEFAULT 'casa',
+  gols_a_favor  INTEGER DEFAULT 0,
+  gols_contra   INTEGER DEFAULT 0,
+  resultado     TEXT DEFAULT 'pendente',
+  observacoes   TEXT DEFAULT '',
+  scouting      TEXT DEFAULT '',
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Modelos de Treino salvos pelo usuário
 CREATE TABLE IF NOT EXISTS modelos_treino (
   id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -158,6 +176,7 @@ ALTER TABLE eventos_calendario ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jogadores          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE chat_messages      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE modelos_treino     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE partidas           ENABLE ROW LEVEL SECURITY;
 
 -- Policies (usuário acessa só os próprios dados)
 DROP POLICY IF EXISTS "own" ON metodologia;
@@ -170,6 +189,7 @@ DROP POLICY IF EXISTS "own" ON eventos_calendario;
 DROP POLICY IF EXISTS "own" ON jogadores;
 DROP POLICY IF EXISTS "own" ON chat_messages;
 DROP POLICY IF EXISTS "own" ON modelos_treino;
+DROP POLICY IF EXISTS "own" ON partidas;
 
 CREATE POLICY "own" ON metodologia        FOR ALL USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
 CREATE POLICY "own" ON planos_macro       FOR ALL USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
@@ -181,3 +201,4 @@ CREATE POLICY "own" ON eventos_calendario FOR ALL USING (auth.uid()=user_id) WIT
 CREATE POLICY "own" ON jogadores          FOR ALL USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
 CREATE POLICY "own" ON chat_messages      FOR ALL USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
 CREATE POLICY "own" ON modelos_treino     FOR ALL USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);
+CREATE POLICY "own" ON partidas           FOR ALL USING (auth.uid()=user_id) WITH CHECK (auth.uid()=user_id);

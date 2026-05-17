@@ -13,9 +13,10 @@ import Calendario from './pages/Calendario';
 import Elenco from './pages/Elenco';
 import ChatIA from './pages/ChatIA';
 import Modelos from './pages/Modelos';
+import Partidas from './pages/Partidas';
 import {
   Home, BookOpen, Calendar, BarChart2, ClipboardList, Target, BookMarked,
-  FolderOpen, LogOut, Moon, Sun, Menu, X, Users, Sparkles, CalendarDays, Library,
+  FolderOpen, LogOut, Moon, Sun, Menu, X, Users, Sparkles, CalendarDays, Library, Trophy,
 } from 'lucide-react';
 
 const MODULES = [
@@ -27,6 +28,7 @@ const MODULES = [
   { id: 'modelos',     label: 'Modelos de Treino',    icon: Library,       group: 'Planejamento' },
   { id: 'calendario',  label: 'Calendário',           icon: CalendarDays,  group: 'Operação' },
   { id: 'elenco',      label: 'Elenco',               icon: Users,         group: 'Operação' },
+  { id: 'partidas',    label: 'Partidas',             icon: Trophy,        group: 'Operação' },
   { id: 'lousa',       label: 'Lousa Tática',         icon: Target,        group: 'Ferramentas' },
   { id: 'exercicios',  label: 'Banco de Exercícios',  icon: BookMarked,    group: 'Ferramentas' },
   { id: 'chat',        label: 'Assistente IA',        icon: Sparkles,      group: 'Ferramentas' },
@@ -201,6 +203,9 @@ export default function FootballApp() {
           )}
           {currentModule === 'elenco' && (
             <Elenco session={session} isDark={isDark} />
+          )}
+          {currentModule === 'partidas' && (
+            <Partidas session={session} isDark={isDark} />
           )}
           {currentModule === 'lousa' && (
             <LousaTatica session={session} isDark={isDark} />
