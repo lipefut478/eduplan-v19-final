@@ -346,10 +346,30 @@ export const BANCO_ATIVIDADES = {
   },
 };
 
+// ─── Banco Expandido (130 → 1300) ─────────────────────────────────────────────
+
+import { gerarBancoExpandido, contarAtividadesGeradas } from './extraActivities';
+
+const BANCO_EXPANDIDO = gerarBancoExpandido();
+
+// Merge: handcurated (BANCO_ATIVIDADES) + gerado (BANCO_EXPANDIDO)
+export const BANCO_COMPLETO = {};
+for (const grupo of Object.keys(BANCO_ATIVIDADES)) {
+  BANCO_COMPLETO[grupo] = {};
+  for (const bloco of Object.keys(BANCO_ATIVIDADES[grupo])) {
+    BANCO_COMPLETO[grupo][bloco] = [
+      ...BANCO_ATIVIDADES[grupo][bloco],
+      ...(BANCO_EXPANDIDO[grupo]?.[bloco] ?? []),
+    ];
+  }
+}
+
+export const TOTAL_ATIVIDADES = contarAtividadesGeradas(BANCO_COMPLETO);
+
 // ─── Funções Helper ────────────────────────────────────────────────────────────
 
 export function sugerirAtividades(groupKey, blocoId, n = 4, principios = []) {
-  const pool = BANCO_ATIVIDADES[groupKey]?.[blocoId] ?? [];
+  const pool = BANCO_COMPLETO[groupKey]?.[blocoId] ?? [];
   if (principios.length === 0) return pool.slice(0, n);
   // Ordenar por alinhamento com princípios da metodologia
   const kws = principios.map(p => p.toLowerCase());

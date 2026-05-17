@@ -23,7 +23,7 @@ function initBlocos(duracoes) {
   }));
 }
 
-export default function MicroPlano({ session, isDark, metodologia }) {
+export default function MicroPlano({ session, isDark, metodologia, preset, onPresetUsed }) {
   const [step, setStep] = useState(0);
   const [blocoAtual, setBlocoAtual] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -47,6 +47,13 @@ export default function MicroPlano({ session, isDark, metodologia }) {
     supabase.from('planos_meso').select('id, titulo, categoria, mes_ref').eq('user_id', session.user.id)
       .then(({ data }) => setMesosList(data || []));
   }, []);
+
+  useEffect(() => {
+    if (preset) {
+      setConfig(c => ({ ...c, ...preset }));
+      onPresetUsed?.();
+    }
+  }, [preset]);
 
   useEffect(() => {
     const duracoes = calcularDuracoes(config.duracao_total);
@@ -91,8 +98,35 @@ export default function MicroPlano({ session, isDark, metodologia }) {
       setBlocos(prev => prev.map(b => {
         const ia = novosBlocos.find(nb => nb.id === b.id);
         if (!ia) return b;
-        return { ...b, duracao: ia.duracao ?? b.duracao, objetivos: ia.objetivos ?? [], atividadesSelecionadas: ia.atividadesSelecionadas ?? [], observacoes: ia.observacoes ?? '' };
+        const ativsIA = ia.atividadesSelecionadas ?? ia.atividadesSugeridas ?? [];
+        return { ...b, duracao: ia.duracao ?? b.duracao, objetivos: ia.objetivos ?? ia.objetivosSugeridos ?? [], atividadesSelecionadas: ativsIA, observacoes: ia.observacoes ?? '' };
       }));
+
+      // Salvar automaticamente cada atividade gerada pela IA no banco de exercícios
+      const grupoAtual = GRUPOS_CATEGORIA[config.categoria];
+      const novosExs = [];
+      novosBlocos.forEach(b => {
+        const ativs = b.atividadesSelecionadas ?? b.atividadesSugeridas ?? [];
+        ativs.forEach(a => {
+          novosExs.push({
+            user_id: session.user.id,
+            titulo: a.titulo,
+            descricao: a.descricao || '',
+            objetivos: a.objetivos || [],
+            materiais: a.materiais || '',
+            organizacao: a.organizacao || '',
+            progressao: a.progressao || '',
+            duracao_sugerida: a.duracao_sugerida || 15,
+            tags: [...(a.tags || []), 'gerado-ia'],
+            categoria_grupo: grupoAtual,
+            bloco_tipo: b.id,
+            favorito: false,
+          });
+        });
+      });
+      if (novosExs.length > 0) {
+        await supabase.from('exercicios').insert(novosExs);
+      }
       setStep(1);
     } catch (e) {
       alert('Erro ao gerar com IA: ' + e.message);
