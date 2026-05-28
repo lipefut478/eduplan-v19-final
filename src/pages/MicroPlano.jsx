@@ -70,27 +70,21 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
   }, [step, config.categoria, grupo]);
 
   async function gerarComIA() {
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-    if (!apiKey) return alert('Configure a variável VITE_ANTHROPIC_API_KEY no arquivo .env');
     setGerando(true);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60_000);
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('ai-proxy', {
+        body: {
           model: 'claude-sonnet-4-6',
           max_tokens: 4000,
           system: [{ type: 'text', text: buildMethodologyPrompt(metodologia), cache_control: { type: 'ephemeral' } }],
           messages: [{ role: 'user', content: buildMicroPlanPrompt(null, null, config) }],
-        }),
+        },
       });
-      const data = await resp.json();
-      const text = data.content?.[0]?.text || '';
+      clearTimeout(timeout);
+      if (error) throw new Error(error.message || 'Erro no servidor');
+      const text = data?.content?.[0]?.text || '';
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('IA não retornou JSON válido');
       const parsed = JSON.parse(jsonMatch[0]);
@@ -129,7 +123,11 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
       }
       setStep(1);
     } catch (e) {
-      alert('Erro ao gerar com IA: ' + e.message);
+      clearTimeout(timeout);
+      const msg = controller.signal.aborted
+        ? 'Tempo limite atingido (60s). Tente novamente.'
+        : (e.message || 'Erro desconhecido');
+      alert('Erro ao gerar com IA: ' + msg);
     }
     setGerando(false);
   }

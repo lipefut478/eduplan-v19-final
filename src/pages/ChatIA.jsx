@@ -29,12 +29,6 @@ export default function ChatIA({ session, isDark, metodologia }) {
   async function enviar(textoOverride) {
     const texto = textoOverride || input.trim();
     if (!texto || enviando) return;
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      setMensagens(m => [...m, { role: 'user', content: texto }, { role: 'assistant', content: '⚠️ Configure a VITE_ANTHROPIC_API_KEY no arquivo .env para usar o chat.' }]);
-      setInput('');
-      return;
-    }
 
     const novasMsgs = [...mensagens, { role: 'user', content: texto }];
     setMensagens(novasMsgs);
@@ -42,25 +36,18 @@ export default function ChatIA({ session, isDark, metodologia }) {
     setEnviando(true);
 
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('ai-proxy', {
+        body: {
           model: 'claude-sonnet-4-6',
           max_tokens: 1500,
           system: [{ type: 'text', text: `${buildMethodologyPrompt(metodologia)}\n\nVocê é um assistente especialista em futebol e treinamento esportivo. Responda de forma clara, prática e contextualizada. Use linguagem brasileira informal e amigável.`, cache_control: { type: 'ephemeral' } }],
           messages: novasMsgs.filter(m => m.role !== 'system').map(m => ({ role: m.role, content: m.content })),
-        }),
+        },
       });
-      const data = await resp.json();
-      const reply = data.content?.[0]?.text || 'Erro ao processar resposta.';
+
+      if (error) throw new Error(error.message || 'Erro no servidor');
+      const reply = data?.content?.[0]?.text || 'Erro ao processar resposta.';
       setMensagens(m => [...m, { role: 'assistant', content: reply }]);
-      // Persistir no Supabase
       await supabase.from('chat_messages').insert([
         { user_id: session.user.id, role: 'user', content: texto },
         { user_id: session.user.id, role: 'assistant', content: reply },
