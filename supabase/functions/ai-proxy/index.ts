@@ -1,13 +1,12 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import {
+  checkRateLimit,
+  sanitizePayload,
+  buildUsageRecord,
+} from './_logic.ts';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const RATE_PER_MINUTE = 20;
-const RATE_PER_DAY = 200;
-const MAX_TOKENS_CAP = 8000;
-// Claude Sonnet pricing per million tokens (USD)
-const PRICE_INPUT_M = 3.0;
-const PRICE_OUTPUT_M = 15.0;
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
@@ -56,23 +55,27 @@ serve(async (req) => {
         .eq('user_id', user.id).gte('created_at', oneDayAgo),
     ]);
 
-    if ((cMin ?? 0) >= RATE_PER_MINUTE)
-      return json({ error: `Limite de ${RATE_PER_MINUTE} req/min atingido. Aguarde.` }, 429);
-    if ((cDay ?? 0) >= RATE_PER_DAY)
-      return json({ error: `Limite de ${RATE_PER_DAY} req/dia atingido.` }, 429);
+    const rateCheck = checkRateLimit(cMin, cDay);
+    if (rateCheck.exceeded) return json({ error: rateCheck.message }, 429);
 
     // ── 3. Validar chave Anthropic ───────────────────────────────────────────
     const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
     if (!anthropicKey) return json({ error: 'Serviço IA não configurado' }, 503);
 
-    // ── 4. Parsear body e encaminhar ─────────────────────────────────────────
-    const body = await req.json();
-    const payload = {
-      model: body.model ?? 'claude-sonnet-4-6',
-      max_tokens: Math.min(body.max_tokens ?? 4000, MAX_TOKENS_CAP),
-      ...(body.system && { system: body.system }),
-      messages: body.messages,
-    };
+    // ── 4. Parsear body, validar e encaminhar ────────────────────────────────
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return json({ error: 'Payload JSON inválido.' }, 400);
+    }
+
+    let payload: ReturnType<typeof sanitizePayload>;
+    try {
+      payload = sanitizePayload(body);
+    } catch (e) {
+      return json({ error: (e as Error).message }, 400);
+    }
 
     const anthropicResp = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
@@ -93,20 +96,13 @@ serve(async (req) => {
     const result = await anthropicResp.json();
 
     // ── 5. Logar uso ─────────────────────────────────────────────────────────
-    const inputTokens = result.usage?.input_tokens ?? 0;
-    const outputTokens = result.usage?.output_tokens ?? 0;
-    const costUsd =
-      (inputTokens / 1_000_000) * PRICE_INPUT_M +
-      (outputTokens / 1_000_000) * PRICE_OUTPUT_M;
-
-    await admin.from('ai_usage').insert({
-      user_id: user.id,
-      model: result.model ?? payload.model,
-      input_tokens: inputTokens,
-      output_tokens: outputTokens,
-      estimated_cost_usd: costUsd,
-      endpoint: 'ai-proxy',
-    });
+    const usageRecord = buildUsageRecord(
+      user.id,
+      result.model ?? payload.model,
+      result.usage?.input_tokens ?? 0,
+      result.usage?.output_tokens ?? 0,
+    );
+    await admin.from('ai_usage').insert(usageRecord);
 
     return json(result);
   } catch (err) {
