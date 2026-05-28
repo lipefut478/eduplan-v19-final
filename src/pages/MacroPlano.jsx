@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Plus, Save, Trash2, Calendar, ChevronDown } from 'lucide-react';
 import { CATEGORIAS, MESES_ANO, FASES_MACRO } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 function initMeses() {
   return MESES_ANO.map(m => ({ mes: m, fase: '', objetivos: '', volume: 'medio', intensidade: 'medio' }));
@@ -17,32 +19,51 @@ export default function MacroPlano({ session, isDark, metodologia }) {
 
 
   async function carregar() {
-    const { data } = await supabase.from('planos_macro').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
-    setLista(data || []);
+    try {
+      const { data, error } = await supabase.from('planos_macro').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      setLista(data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { carregar(); }, []);
 
   async function salvar() {
-    if (!form.titulo) return alert('Informe um título para o plano.');
+    if (!form.titulo) { toast.warning('Informe um título para o plano.'); return; }
     setSaving(true);
-    const payload = { user_id: session.user.id, ...form, updated_at: new Date().toISOString() };
-    if (editando) {
-      await supabase.from('planos_macro').update(payload).eq('id', editando);
-    } else {
-      await supabase.from('planos_macro').insert([payload]);
+    try {
+      const payload = { user_id: session.user.id, ...form, updated_at: new Date().toISOString() };
+      if (editando) {
+        const { error } = await supabase.from('planos_macro').update(payload).eq('id', editando);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('planos_macro').insert([payload]);
+        if (error) throw error;
+      }
+      toast.success(editando ? MESSAGES.success.updated : MESSAGES.success.created);
+      setEditando(null);
+      setForm({ titulo: '', categoria: 'Sub-11', temporada: '2025/2026', meses: initMeses() });
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setEditando(null);
-    setForm({ titulo: '', categoria: 'Sub-11', temporada: '2025/2026', meses: initMeses() });
-    carregar();
   }
 
   async function excluir(id) {
     if (!confirm('Excluir plano macro?')) return;
-    await supabase.from('planos_macro').delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from('planos_macro').delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   function abrirEditar(p) {

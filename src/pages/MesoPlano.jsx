@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Plus, Save, Trash2, BarChart2 } from 'lucide-react';
 import { CATEGORIAS, MESES_ANO } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 function initSemanas() {
   return [1, 2, 3, 4].map(n => ({
@@ -20,37 +22,61 @@ export default function MesoPlano({ session, isDark, metodologia }) {
 
 
   async function carregar() {
-    const { data } = await supabase.from('planos_meso').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
-    setLista(data || []);
+    try {
+      const { data, error } = await supabase.from('planos_meso').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      setLista(data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   async function carregarMacros() {
-    const { data } = await supabase.from('planos_macro').select('id, titulo, categoria').eq('user_id', session.user.id);
-    setMacros(data || []);
+    try {
+      const { data, error } = await supabase.from('planos_macro').select('id, titulo, categoria').eq('user_id', session.user.id);
+      if (error) throw error;
+      setMacros(data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { carregar(); carregarMacros(); }, []);
 
   async function salvar() {
-    if (!form.titulo) return alert('Informe um título.');
+    if (!form.titulo) { toast.warning('Informe um título.'); return; }
     setSaving(true);
-    const payload = { user_id: session.user.id, ...form, macro_id: form.macro_id || null, updated_at: new Date().toISOString() };
-    if (editando && editando !== 'novo') {
-      await supabase.from('planos_meso').update(payload).eq('id', editando);
-    } else {
-      await supabase.from('planos_meso').insert([payload]);
+    try {
+      const payload = { user_id: session.user.id, ...form, macro_id: form.macro_id || null, updated_at: new Date().toISOString() };
+      if (editando && editando !== 'novo') {
+        const { error } = await supabase.from('planos_meso').update(payload).eq('id', editando);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('planos_meso').insert([payload]);
+        if (error) throw error;
+      }
+      toast.success(editando && editando !== 'novo' ? MESSAGES.success.updated : MESSAGES.success.created);
+      setEditando(null);
+      setForm({ titulo: '', categoria: 'Sub-11', mes_ref: 'Janeiro', macro_id: '', semanas: initSemanas(), justificativa_metodologica: '' });
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setEditando(null);
-    setForm({ titulo: '', categoria: 'Sub-11', mes_ref: 'Janeiro', macro_id: '', semanas: initSemanas(), justificativa_metodologica: '' });
-    carregar();
   }
 
   async function excluir(id) {
     if (!confirm('Excluir plano meso?')) return;
-    await supabase.from('planos_meso').delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from('planos_meso').delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   function abrirEditar(p) {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Trash2, FolderOpen, Calendar, BarChart2, ClipboardList, Target, BookOpen } from 'lucide-react';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const TABS = [
   { id: 'macro',    label: 'Macro',       icon: Calendar },
@@ -23,21 +25,30 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
 
   async function carregar() {
     const uid = session.user.id;
-    if (tab === 'macro') {
-      const { data } = await supabase.from('planos_macro').select('*').eq('user_id', uid).order('created_at', { ascending: false });
-      setMacro(data || []);
-    } else if (tab === 'meso') {
-      const { data } = await supabase.from('planos_meso').select('*').eq('user_id', uid).order('created_at', { ascending: false });
-      setMeso(data || []);
-    } else if (tab === 'micro') {
-      const { data } = await supabase.from('planos_treino').select('*').eq('user_id', uid).order('created_at', { ascending: false });
-      setMicro(data || []);
-    } else if (tab === 'lousa') {
-      const { data } = await supabase.from('lousa_tatica').select('*').eq('user_id', uid).order('created_at', { ascending: false });
-      setLousa(data || []);
-    } else if (tab === 'exercicios') {
-      const { data } = await supabase.from('exercicios').select('*').eq('user_id', uid).order('created_at', { ascending: false });
-      setExercicios(data || []);
+    try {
+      if (tab === 'macro') {
+        const { data, error } = await supabase.from('planos_macro').select('*').eq('user_id', uid).order('created_at', { ascending: false });
+        if (error) throw error;
+        setMacro(data || []);
+      } else if (tab === 'meso') {
+        const { data, error } = await supabase.from('planos_meso').select('*').eq('user_id', uid).order('created_at', { ascending: false });
+        if (error) throw error;
+        setMeso(data || []);
+      } else if (tab === 'micro') {
+        const { data, error } = await supabase.from('planos_treino').select('*').eq('user_id', uid).order('created_at', { ascending: false });
+        if (error) throw error;
+        setMicro(data || []);
+      } else if (tab === 'lousa') {
+        const { data, error } = await supabase.from('lousa_tatica').select('*').eq('user_id', uid).order('created_at', { ascending: false });
+        if (error) throw error;
+        setLousa(data || []);
+      } else if (tab === 'exercicios') {
+        const { data, error } = await supabase.from('exercicios').select('*').eq('user_id', uid).order('created_at', { ascending: false });
+        if (error) throw error;
+        setExercicios(data || []);
+      }
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
     }
   }
 
@@ -46,8 +57,14 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
 
   async function excluir(tabela, id) {
     if (!confirm('Excluir permanentemente?')) return;
-    await supabase.from(tabela).delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from(tabela).delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   const card = { background: s('#fff', '#1f2937'), borderRadius: 14, padding: 18, border: `1px solid ${s('#e5e7eb', '#374151')}` };
