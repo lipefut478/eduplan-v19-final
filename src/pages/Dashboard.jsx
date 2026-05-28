@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { TOTAL_ATIVIDADES, BLOCOS_TREINO } from '../data/footballData';
 import { toast } from '../lib/toast';
-import { MESSAGES } from '../lib/messages';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 export default function Dashboard({ session, isDark, onNavigate, metodologia }) {
   const [stats, setStats] = useState({
@@ -17,28 +17,34 @@ export default function Dashboard({ session, isDark, onNavigate, metodologia }) 
   const s = (l, d) => isDark ? d : l;
 
   async function carregar() {
-    const uid = session.user.id;
-    const [macros, mesos, micros, lousas, exercicios] = await Promise.all([
-      supabase.from('planos_macro').select('id').eq('user_id', uid),
-      supabase.from('planos_meso').select('id').eq('user_id', uid),
-      supabase.from('planos_treino').select('id, escola, categoria, tema, data_treino, duracao_total, gerado_por_ia, created_at').eq('user_id', uid).order('created_at', { ascending: false }),
-      supabase.from('lousa_tatica').select('id').eq('user_id', uid),
-      supabase.from('exercicios').select('id, tags').eq('user_id', uid),
-    ]);
-    const microsData = micros.data || [];
-    const totalMin = microsData.reduce((acc, p) => acc + (p.duracao_total || 0), 0);
-    const iaGerados = (exercicios.data || []).filter(e => (e.tags || []).includes('gerado-ia')).length;
-    setStats({
-      macros: macros.data?.length || 0,
-      mesos: mesos.data?.length || 0,
-      micros: microsData.length,
-      lousas: lousas.data?.length || 0,
-      exercicios: exercicios.data?.length || 0,
-      iaGerados,
-      horasPlanejadas: Math.round(totalMin / 60),
-      ultimoTreino: microsData[0] || null,
-      recentes: microsData.slice(0, 5),
-    });
+    try {
+      const uid = session.user.id;
+      const [macros, mesos, micros, lousas, exercicios] = await Promise.all([
+        supabase.from('planos_macro').select('id').eq('user_id', uid),
+        supabase.from('planos_meso').select('id').eq('user_id', uid),
+        supabase.from('planos_treino').select('id, escola, categoria, tema, data_treino, duracao_total, gerado_por_ia, created_at').eq('user_id', uid).order('created_at', { ascending: false }),
+        supabase.from('lousa_tatica').select('id').eq('user_id', uid),
+        supabase.from('exercicios').select('id, tags').eq('user_id', uid),
+      ]);
+      const macrosError = macros.error || mesos.error || micros.error || lousas.error || exercicios.error;
+      if (macrosError) throw macrosError;
+      const microsData = micros.data || [];
+      const totalMin = microsData.reduce((acc, p) => acc + (p.duracao_total || 0), 0);
+      const iaGerados = (exercicios.data || []).filter(e => (e.tags || []).includes('gerado-ia')).length;
+      setStats({
+        macros: macros.data?.length || 0,
+        mesos: mesos.data?.length || 0,
+        micros: microsData.length,
+        lousas: lousas.data?.length || 0,
+        exercicios: exercicios.data?.length || 0,
+        iaGerados,
+        horasPlanejadas: Math.round(totalMin / 60),
+        ultimoTreino: microsData[0] || null,
+        recentes: microsData.slice(0, 5),
+      });
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

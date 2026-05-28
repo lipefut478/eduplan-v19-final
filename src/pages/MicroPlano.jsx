@@ -13,6 +13,8 @@ import {
   GRUPOS_CATEGORIA, sugerirAtividades, calcularDuracoes,
   detectarRepeticao, buildMethodologyPrompt, buildMicroPlanPrompt
 } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const ICONS = { Flame, Target, Map, Trophy, Wind, Shuffle, Dumbbell, Gamepad2 };
 
@@ -127,7 +129,7 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
       const msg = controller.signal.aborted
         ? 'Tempo limite atingido (60s). Tente novamente.'
         : (e.message || 'Erro desconhecido');
-      alert('Erro ao gerar com IA: ' + msg);
+      toast.error('Erro ao gerar com IA: ' + msg);
     }
     setGerando(false);
   }
@@ -170,22 +172,30 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
 
   async function salvar() {
     setSaving(true);
-    const payload = {
-      user_id: session.user.id, meso_id: config.meso_id || null,
-      escola: config.escola, treinador: config.treinador, categoria: config.categoria,
-      grupo: config.grupo, data_treino: config.data_treino, duracao_total: config.duracao_total,
-      objetivo: config.objetivo, tema: config.tema,
-      justificativa_metodologica: config.justificativa_metodologica,
-      blocos, updated_at: new Date().toISOString(),
-    };
-    if (planoAtualId) {
-      await supabase.from('planos_treino').update(payload).eq('id', planoAtualId);
-    } else {
-      const { data } = await supabase.from('planos_treino').insert([payload]).select('id').single();
-      if (data) setPlanoAtualId(data.id);
+    try {
+      const payload = {
+        user_id: session.user.id, meso_id: config.meso_id || null,
+        escola: config.escola, treinador: config.treinador, categoria: config.categoria,
+        grupo: config.grupo, data_treino: config.data_treino, duracao_total: config.duracao_total,
+        objetivo: config.objetivo, tema: config.tema,
+        justificativa_metodologica: config.justificativa_metodologica,
+        blocos, updated_at: new Date().toISOString(),
+      };
+      if (planoAtualId) {
+        const { error } = await supabase.from('planos_treino').update(payload).eq('id', planoAtualId);
+        if (error) throw error;
+        toast.success(MESSAGES.success.updated);
+      } else {
+        const { data, error } = await supabase.from('planos_treino').insert([payload]).select('id').single();
+        if (error) throw error;
+        if (data) setPlanoAtualId(data.id);
+        toast.success(MESSAGES.success.created);
+      }
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    alert('✅ Plano salvo na nuvem!');
   }
 
   function gerarPDF() {
@@ -384,14 +394,14 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button
         type="button"
-              onClick={() => { if (!config.escola || !config.treinador) return alert('Preencha escola e treinador.'); setStep(1); }}
+              onClick={() => { if (!config.escola || !config.treinador) { toast.warning('Preencha escola e treinador.'); return; } setStep(1); }}
               style={btnPrimary}
             >
               Iniciar Planejamento Manual <ArrowRight size={18} />
             </button>
             <button
         type="button"
-              onClick={() => { if (!config.escola || !config.treinador || !config.tema) return alert('Preencha escola, treinador e tema.'); gerarComIA(); }}
+              onClick={() => { if (!config.escola || !config.treinador || !config.tema) { toast.warning('Preencha escola, treinador e tema.'); return; } gerarComIA(); }}
               disabled={gerando}
               style={{ ...btnPrimary, background: '#1d4ed8' }}
             >

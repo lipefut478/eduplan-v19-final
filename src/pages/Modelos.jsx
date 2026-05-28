@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Plus, Trash2, Copy, BookMarked, Star, X } from 'lucide-react';
 import { BLOCOS_TREINO, CATEGORIAS } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 // Modelos pré-definidos do sistema
 const MODELOS_SISTEMA = [
@@ -75,8 +77,13 @@ export default function Modelos({ session, isDark, onUsar }) {
 
 
   async function carregar() {
-    const { data } = await supabase.from('modelos_treino').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
-    setMeus(data || []);
+    try {
+      const { data, error } = await supabase.from('modelos_treino').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      setMeus(data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,8 +91,14 @@ export default function Modelos({ session, isDark, onUsar }) {
 
   async function excluir(id) {
     if (!confirm('Excluir modelo?')) return;
-    await supabase.from('modelos_treino').delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from('modelos_treino').delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   function usarModelo(m) {

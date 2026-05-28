@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Upload, Save, BookOpen, Target, Star, Users, FileText, CheckCircle, X, Plus } from 'lucide-react';
 import { CATEGORIAS } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 export default function Metodologia({ session, isDark, onSaved }) {
   const [form, setForm] = useState({
@@ -21,21 +23,26 @@ export default function Metodologia({ session, isDark, onSaved }) {
   const s = (light, dark) => isDark ? dark : light;
 
   async function carregarMetodologia() {
-    const { data } = await supabase
-      .from('metodologia')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .single();
-    if (data) {
-      setForm({
-        nome_escola: data.nome_escola || '',
-        estilo_jogo: data.estilo_jogo || '',
-        pilares: data.pilares || [],
-        objetivos_por_categoria: data.objetivos_por_categoria || {},
-        valores: data.valores || '',
-        arquivo_nome: data.arquivo_nome || '',
-        arquivo_texto: data.arquivo_texto || '',
-      });
+    try {
+      const { data, error } = await supabase
+        .from('metodologia')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+      if (error && error.code !== 'PGRST116') throw error;
+      if (data) {
+        setForm({
+          nome_escola: data.nome_escola || '',
+          estilo_jogo: data.estilo_jogo || '',
+          pilares: data.pilares || [],
+          objetivos_por_categoria: data.objetivos_por_categoria || {},
+          valores: data.valores || '',
+          arquivo_nome: data.arquivo_nome || '',
+          arquivo_texto: data.arquivo_texto || '',
+        });
+      }
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
     }
   }
 
@@ -47,7 +54,7 @@ export default function Metodologia({ session, isDark, onSaved }) {
       const text = await file.text();
       setForm(f => ({ ...f, arquivo_nome: file.name, arquivo_texto: text }));
     } catch {
-      alert('Não foi possível ler o arquivo. Use arquivos .txt ou .md.');
+      toast.warning('Não foi possível ler o arquivo. Use arquivos .txt ou .md.');
     }
     setUploading(false);
   }
@@ -68,15 +75,18 @@ export default function Metodologia({ session, isDark, onSaved }) {
 
   async function salvar() {
     setSaving(true);
-    const payload = { user_id: session.user.id, ...form, updated_at: new Date().toISOString() };
-    const { error } = await supabase.from('metodologia').upsert(payload, { onConflict: 'user_id' });
-    setSaving(false);
-    if (!error) {
+    try {
+      const payload = { user_id: session.user.id, ...form, updated_at: new Date().toISOString() };
+      const { error } = await supabase.from('metodologia').upsert(payload, { onConflict: 'user_id' });
+      if (error) throw error;
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
+      toast.success(MESSAGES.success.saved);
       onSaved?.(form);
-    } else {
-      alert('Erro ao salvar. Verifique se a tabela metodologia existe no Supabase.');
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    } finally {
+      setSaving(false);
     }
   }
 

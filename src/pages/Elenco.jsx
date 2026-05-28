@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Plus, Trash2, Users, Star, X, Save, User } from 'lucide-react';
 import { CATEGORIAS } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const POSICOES = ['Goleiro', 'Zagueiro', 'Lateral', 'Volante', 'Meia', 'Atacante'];
 const ATRIBUTOS = [
@@ -100,25 +102,47 @@ export default function Elenco({ session, isDark }) {
 
 
   async function carregar() {
-    const { data } = await supabase.from('jogadores').select('*').eq('user_id', session.user.id).order('numero', { ascending: true });
-    setLista(data || []);
+    try {
+      const { data, error } = await supabase.from('jogadores').select('*').eq('user_id', session.user.id).order('numero', { ascending: true });
+      if (error) throw error;
+      setLista(data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { carregar(); }, []);
 
   async function salvar(form) {
-    const payload = { ...form, user_id: session.user.id, updated_at: new Date().toISOString() };
-    if (form.id) await supabase.from('jogadores').update(payload).eq('id', form.id);
-    else await supabase.from('jogadores').insert([payload]);
-    setModal(null);
-    carregar();
+    try {
+      const payload = { ...form, user_id: session.user.id, updated_at: new Date().toISOString() };
+      if (form.id) {
+        const { error } = await supabase.from('jogadores').update(payload).eq('id', form.id);
+        if (error) throw error;
+        toast.success(MESSAGES.success.updated);
+      } else {
+        const { error } = await supabase.from('jogadores').insert([payload]);
+        if (error) throw error;
+        toast.success(MESSAGES.success.created);
+      }
+      setModal(null);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   async function excluir(id) {
     if (!confirm('Excluir jogador?')) return;
-    await supabase.from('jogadores').delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from('jogadores').delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   const filtered = lista.filter(j => !filtroCategoria || j.categoria === filtroCategoria);

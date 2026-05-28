@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { Save, Download, RotateCcw, Minus, Circle, Triangle, Flag, Target, Trash2, Plus } from 'lucide-react';
 import { EQUIPAMENTOS_TATICOS, FORMACOES } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const CAMPO_TIPOS = {
   futebol:  { label: 'Futebol (11×11)', vw: 100, vh: 65, jogadores: 11 },
@@ -217,10 +219,16 @@ export default function LousaTatica({ session, isDark }) {
 
   async function salvarNuvem() {
     setSaving(true);
-    const estado = { players, equipamentos, drawings, tipoCampo, formA, formB };
-    await supabase.from('lousa_tatica').insert([{ user_id: session.user.id, titulo, tipo_campo: tipoCampo, estado }]);
-    setSaving(false);
-    alert('✅ Lousa salva na nuvem!');
+    try {
+      const estado = { players, equipamentos, drawings, tipoCampo, formA, formB };
+      const { error } = await supabase.from('lousa_tatica').insert([{ user_id: session.user.id, titulo, tipo_campo: tipoCampo, estado }]);
+      if (error) throw error;
+      toast.success(MESSAGES.success.saved);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    } finally {
+      setSaving(false);
+    }
   }
 
   const CORES = ['#ffffff', '#ffff00', '#ff4444', '#000000', '#4488ff', '#00ff88'];

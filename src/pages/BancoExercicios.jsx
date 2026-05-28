@@ -5,6 +5,8 @@ import jsPDF from 'jspdf';
 import * as docx from 'docx';
 import { saveAs } from 'file-saver';
 import { BLOCOS_TREINO, GRUPOS_CATEGORIA, GRUPOS_LABEL } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const GRUPOS = ['iniciacao', 'desenvolvimento', 'aperfeicoamento', 'alto_rendimento'];
 
@@ -118,33 +120,57 @@ export default function BancoExercicios({ session, isDark }) {
 
 
   async function carregar() {
-    const { data } = await supabase.from('exercicios').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
-    setLista(data || []);
+    try {
+      const { data, error } = await supabase.from('exercicios').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      setLista(data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { carregar(); }, []);
 
   async function salvarExercicio(form) {
-    const payload = { ...form, user_id: session.user.id, updated_at: new Date().toISOString() };
-    if (form.id) {
-      await supabase.from('exercicios').update(payload).eq('id', form.id);
-    } else {
-      await supabase.from('exercicios').insert([payload]);
+    try {
+      const payload = { ...form, user_id: session.user.id, updated_at: new Date().toISOString() };
+      if (form.id) {
+        const { error } = await supabase.from('exercicios').update(payload).eq('id', form.id);
+        if (error) throw error;
+        toast.success(MESSAGES.success.updated);
+      } else {
+        const { error } = await supabase.from('exercicios').insert([payload]);
+        if (error) throw error;
+        toast.success(MESSAGES.success.created);
+      }
+      setModal(null);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
     }
-    setModal(null);
-    carregar();
   }
 
   async function excluir(id) {
     if (!confirm('Excluir exercício?')) return;
-    await supabase.from('exercicios').delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from('exercicios').delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   async function toggleFav(ex) {
-    await supabase.from('exercicios').update({ favorito: !ex.favorito }).eq('id', ex.id);
-    setLista(prev => prev.map(e => e.id === ex.id ? { ...e, favorito: !e.favorito } : e));
+    try {
+      const { error } = await supabase.from('exercicios').update({ favorito: !ex.favorito }).eq('id', ex.id);
+      if (error) throw error;
+      setLista(prev => prev.map(e => e.id === ex.id ? { ...e, favorito: !e.favorito } : e));
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   function exportarPDF(ex) {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { ChevronLeft, ChevronRight, Calendar, ClipboardList, Plus, X } from 'lucide-react';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const DIAS_SEMANA_LBL = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -16,26 +18,45 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
 
 
   async function carregar() {
-    const uid = session.user.id;
-    const [t, e] = await Promise.all([
-      supabase.from('planos_treino').select('id, escola, categoria, tema, data_treino, duracao_total, gerado_por_ia').eq('user_id', uid),
-      supabase.from('eventos_calendario').select('*').eq('user_id', uid),
-    ]);
-    setTreinos(t.data || []);
-    setEventos(e.data || []);
+    try {
+      const uid = session.user.id;
+      const [t, e] = await Promise.all([
+        supabase.from('planos_treino').select('id, escola, categoria, tema, data_treino, duracao_total, gerado_por_ia').eq('user_id', uid),
+        supabase.from('eventos_calendario').select('*').eq('user_id', uid),
+      ]);
+      if (t.error) throw t.error;
+      if (e.error) throw e.error;
+      setTreinos(t.data || []);
+      setEventos(e.data || []);
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { carregar(); }, [data]);
 
   async function adicionarEvento(novo) {
-    const { error } = await supabase.from('eventos_calendario').insert([{ ...novo, user_id: session.user.id }]);
-    if (!error) { setNovoEvento(null); carregar(); }
+    try {
+      const { error } = await supabase.from('eventos_calendario').insert([{ ...novo, user_id: session.user.id }]);
+      if (error) throw error;
+      toast.success(MESSAGES.success.created);
+      setNovoEvento(null);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   async function excluirEvento(id) {
-    await supabase.from('eventos_calendario').delete().eq('id', id);
-    carregar();
+    try {
+      const { error } = await supabase.from('eventos_calendario').delete().eq('id', id);
+      if (error) throw error;
+      toast.success(MESSAGES.success.deleted);
+      carregar();
+    } catch (e) {
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+    }
   }
 
   const mes = data.getMonth();

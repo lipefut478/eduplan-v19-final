@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Send, Bot, User, Trash2, Loader, Sparkles } from 'lucide-react';
 import { buildMethodologyPrompt } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES, messageFromSupabaseError } from '../lib/messages';
 
 const PROMPTS_RAPIDOS = [
   'Como ensinar passe curto para iniciantes?',
@@ -53,7 +55,8 @@ export default function ChatIA({ session, isDark, metodologia }) {
         { user_id: session.user.id, role: 'assistant', content: reply },
       ]);
     } catch (e) {
-      setMensagens(m => [...m, { role: 'assistant', content: '❌ Erro: ' + e.message }]);
+      toast.error(messageFromSupabaseError(e instanceof Error ? { message: e.message } : e));
+      setMensagens(m => [...m, { role: 'assistant', content: '❌ Erro ao processar sua mensagem. Tente novamente.' }]);
     }
     setEnviando(false);
   }
