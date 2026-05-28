@@ -20,7 +20,6 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); }, [tab]);
 
   async function carregar() {
     const uid = session.user.id;
@@ -41,6 +40,9 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
       setExercicios(data || []);
     }
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, [tab]);
 
   async function excluir(tabela, id) {
     if (!confirm('Excluir permanentemente?')) return;

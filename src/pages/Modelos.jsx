@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { Plus, Trash2, Copy, BookMarked, Star, X } from 'lucide-react';
-import { BLOCOS_TREINO, CATEGORIAS, calcularDuracoes } from '../data/footballData';
+import { BLOCOS_TREINO, CATEGORIAS } from '../data/footballData';
 
 // Modelos pré-definidos do sistema
 const MODELOS_SISTEMA = [
@@ -73,12 +73,14 @@ export default function Modelos({ session, isDark, onUsar }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); }, []);
 
   async function carregar() {
     const { data } = await supabase.from('modelos_treino').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
     setMeus(data || []);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, []);
 
   async function excluir(id) {
     if (!confirm('Excluir modelo?')) return;

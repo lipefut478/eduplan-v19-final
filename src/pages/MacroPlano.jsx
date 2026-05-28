@@ -15,12 +15,14 @@ export default function MacroPlano({ session, isDark, metodologia }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); }, []);
 
   async function carregar() {
     const { data } = await supabase.from('planos_macro').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
     setLista(data || []);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, []);
 
   async function salvar() {
     if (!form.titulo) return alert('Informe um título para o plano.');

@@ -20,10 +20,6 @@ export default function Metodologia({ session, isDark, onSaved }) {
 
   const s = (light, dark) => isDark ? dark : light;
 
-  useEffect(() => {
-    carregarMetodologia();
-  }, []);
-
   async function carregarMetodologia() {
     const { data } = await supabase
       .from('metodologia')
@@ -83,6 +79,9 @@ export default function Metodologia({ session, isDark, onSaved }) {
       alert('Erro ao salvar. Verifique se a tabela metodologia existe no Supabase.');
     }
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregarMetodologia(); }, []);
 
   const card = {
     background: s('#fff', '#1f2937'),

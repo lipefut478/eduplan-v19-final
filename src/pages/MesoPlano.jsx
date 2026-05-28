@@ -18,7 +18,6 @@ export default function MesoPlano({ session, isDark, metodologia }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); carregarMacros(); }, []);
 
   async function carregar() {
     const { data } = await supabase.from('planos_meso').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
@@ -29,6 +28,9 @@ export default function MesoPlano({ session, isDark, metodologia }) {
     const { data } = await supabase.from('planos_macro').select('id, titulo, categoria').eq('user_id', session.user.id);
     setMacros(data || []);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); carregarMacros(); }, []);
 
   async function salvar() {
     if (!form.titulo) return alert('Informe um título.');

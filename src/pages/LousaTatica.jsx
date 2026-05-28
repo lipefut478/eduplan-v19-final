@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { Save, Download, RotateCcw, Minus, Circle, Triangle, Flag, Target, Trash2, Plus } from 'lucide-react';
 import { EQUIPAMENTOS_TATICOS, FORMACOES } from '../data/footballData';
@@ -29,7 +29,6 @@ function gerarJogadores(n, time, offsetX = 0) {
 function FieldSVG({ tipoCampo }) {
   const c = tipoCampo;
   const isF = c === 'futebol';
-  const isS = c === 'society';
   const isFt = c === 'futsal';
 
   const lineProps = { stroke: '#fff', strokeWidth: 0.5, fill: 'none', strokeOpacity: 0.9 };

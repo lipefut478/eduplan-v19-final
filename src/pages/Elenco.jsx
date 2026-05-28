@@ -98,12 +98,14 @@ export default function Elenco({ session, isDark }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); }, []);
 
   async function carregar() {
     const { data } = await supabase.from('jogadores').select('*').eq('user_id', session.user.id).order('numero', { ascending: true });
     setLista(data || []);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, []);
 
   async function salvar(form) {
     const payload = { ...form, user_id: session.user.id, updated_at: new Date().toISOString() };

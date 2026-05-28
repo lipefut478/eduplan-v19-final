@@ -14,10 +14,6 @@ export default function Dashboard({ session, isDark, onNavigate, metodologia }) 
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => {
-    carregar();
-  }, []);
-
   async function carregar() {
     const uid = session.user.id;
     const [macros, mesos, micros, lousas, exercicios] = await Promise.all([
@@ -42,6 +38,9 @@ export default function Dashboard({ session, isDark, onNavigate, metodologia }) 
       recentes: microsData.slice(0, 5),
     });
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, []);
 
   const card = { background: s('#fff', '#1f2937'), borderRadius: 16, padding: 24, border: `1px solid ${s('#e5e7eb', '#374151')}` };
   const tileGrid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14, marginBottom: 24 };

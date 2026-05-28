@@ -14,7 +14,6 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); }, [data]);
 
   async function carregar() {
     const uid = session.user.id;
@@ -25,6 +24,9 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
     setTreinos(t.data || []);
     setEventos(e.data || []);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, [data]);
 
   async function adicionarEvento(novo) {
     const { error } = await supabase.from('eventos_calendario').insert([{ ...novo, user_id: session.user.id }]);

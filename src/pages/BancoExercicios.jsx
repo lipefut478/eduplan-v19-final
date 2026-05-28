@@ -116,12 +116,14 @@ export default function BancoExercicios({ session, isDark }) {
 
   const s = (l, d) => isDark ? d : l;
 
-  useEffect(() => { carregar(); }, []);
 
   async function carregar() {
     const { data } = await supabase.from('exercicios').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false });
     setLista(data || []);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { carregar(); }, []);
 
   async function salvarExercicio(form) {
     const payload = { ...form, user_id: session.user.id, updated_at: new Date().toISOString() };
