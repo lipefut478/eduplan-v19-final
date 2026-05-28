@@ -2,20 +2,56 @@ import React, { useState, useEffect } from 'react';
 import { checkAppHealth } from '../lib/healthCheck';
 import { Activity, CheckCircle, XCircle, Clock, RefreshCw, AlertTriangle } from 'lucide-react';
 
+function CheckRow({ label, result, isDark }) {
+  const s = (l, d) => isDark ? d : l;
+  const icon = result?.ok
+    ? <CheckCircle size={16} color="#16a34a" />
+    : <XCircle size={16} color="#dc2626" />;
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'flex-start', gap: 12,
+      padding: '12px 16px', borderRadius: 10,
+      background: s(result?.ok ? '#f0fdf4' : '#fef2f2', result?.ok ? '#052e16' : '#450a0a'),
+      marginBottom: 8, border: `1px solid ${result?.ok ? '#bbf7d0' : '#fca5a5'}`,
+    }}>
+      <div style={{ marginTop: 1 }}>{icon}</div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontWeight: 600, fontSize: 14, color: s('#111827', '#f3f4f6') }}>{label}</div>
+        {result?.latencyMs !== undefined && (
+          <div style={{ fontSize: 12, color: s('#6b7280', '#9ca3af'), display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+            <Clock size={11} /> {result.latencyMs}ms
+          </div>
+        )}
+        {result?.missing && (
+          <div style={{ fontSize: 12, color: '#dc2626', marginTop: 2 }}>
+            Faltando: {result.missing.join(', ')}
+          </div>
+        )}
+        {result?.error && (
+          <div style={{ fontSize: 12, color: '#dc2626', marginTop: 2 }}>{result.error}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Health({ isDark }) {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const s = (l, d) => isDark ? d : l;
 
-  async function refresh() {
+  useEffect(() => {
+    checkAppHealth().then(result => { setHealth(result); setLoading(false); });
+  }, []);
+
+  async function handleRefresh() {
     setLoading(true);
     const result = await checkAppHealth();
     setHealth(result);
     setLoading(false);
   }
-
-  useEffect(() => { refresh(); }, []);
 
   const STATUS_COLOR = {
     healthy:   '#16a34a',
@@ -29,39 +65,6 @@ export default function Health({ isDark }) {
     unhealthy: '❌ Inoperante',
   };
 
-  function CheckRow({ label, result }) {
-    const icon = result?.ok
-      ? <CheckCircle size={16} color="#16a34a" />
-      : <XCircle size={16} color="#dc2626" />;
-
-    return (
-      <div style={{
-        display: 'flex', alignItems: 'flex-start', gap: 12,
-        padding: '12px 16px', borderRadius: 10,
-        background: s(result?.ok ? '#f0fdf4' : '#fef2f2', result?.ok ? '#052e16' : '#450a0a'),
-        marginBottom: 8, border: `1px solid ${result?.ok ? '#bbf7d0' : '#fca5a5'}`,
-      }}>
-        <div style={{ marginTop: 1 }}>{icon}</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 600, fontSize: 14, color: s('#111827', '#f3f4f6') }}>{label}</div>
-          {result?.latencyMs !== undefined && (
-            <div style={{ fontSize: 12, color: s('#6b7280', '#9ca3af'), display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-              <Clock size={11} /> {result.latencyMs}ms
-            </div>
-          )}
-          {result?.missing && (
-            <div style={{ fontSize: 12, color: '#dc2626', marginTop: 2 }}>
-              Faltando: {result.missing.join(', ')}
-            </div>
-          )}
-          {result?.error && (
-            <div style={{ fontSize: 12, color: '#dc2626', marginTop: 2 }}>{result.error}</div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={{ maxWidth: 600, margin: '40px auto', padding: '0 16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
@@ -74,7 +77,7 @@ export default function Health({ isDark }) {
             Status dos serviços do FootballPlan
           </p>
         </div>
-        <button type="button" onClick={refresh} disabled={loading} style={{
+        <button type="button" onClick={handleRefresh} disabled={loading} style={{
           marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6,
           padding: '8px 16px', borderRadius: 8, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
           background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), fontWeight: 600, fontSize: 13,
@@ -107,9 +110,9 @@ export default function Health({ isDark }) {
 
           {/* Checks individuais */}
           <div>
-            <CheckRow label="Variáveis de ambiente"  result={health.checks.envVars} />
-            <CheckRow label="Supabase (Auth/DB)"      result={health.checks.supabase} />
-            <CheckRow label="Edge Function ai-proxy"  result={health.checks.aiProxy} />
+            <CheckRow label="Variáveis de ambiente"  result={health.checks.envVars}  isDark={isDark} />
+            <CheckRow label="Supabase (Auth/DB)"      result={health.checks.supabase} isDark={isDark} />
+            <CheckRow label="Edge Function ai-proxy"  result={health.checks.aiProxy}  isDark={isDark} />
           </div>
 
           {health.status !== 'healthy' && (

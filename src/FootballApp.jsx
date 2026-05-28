@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Toaster } from 'sonner';
 import { supabase } from './supabaseClient';
 import Login from './Login';
 import Health from './pages/Health';
@@ -92,6 +93,16 @@ export default function FootballApp() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: bg, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        toastOptions={{
+          duration: 4000,
+          style: { fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: 14 },
+        }}
+        theme={isDark ? 'dark' : 'light'}
+      />
       <aside style={{
         width: sidebarOpen ? 240 : 0, flexShrink: 0, background: sidebar, borderRight: `1px solid ${sidebarBorder}`,
         display: 'flex', flexDirection: 'column', overflow: 'hidden', transition: 'width 0.2s', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 100,

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import {
   Calendar, BarChart2, ClipboardList, Target, BookOpen, Bot,
-  TrendingUp, Award, Clock, Users, Zap, Activity
+  TrendingUp, Award, Clock, Users, Zap, Activity, Bell
 } from 'lucide-react';
 import { TOTAL_ATIVIDADES, BLOCOS_TREINO } from '../data/footballData';
+import { toast } from '../lib/toast';
+import { MESSAGES } from '../lib/messages';
 
 export default function Dashboard({ session, isDark, onNavigate, metodologia }) {
   const [stats, setStats] = useState({
@@ -128,6 +130,31 @@ export default function Dashboard({ session, isDark, onNavigate, metodologia }) 
                 </button>
               );
             })}
+          </div>
+
+          {/* ── Demo Toasts (remover após validação visual) ── */}
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${s('#e5e7eb', '#374151')}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+              <Bell size={13} color={s('#9ca3af', '#6b7280')} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: s('#9ca3af', '#6b7280'), textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Demo Toasts
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {[
+                { label: '✅ Sucesso', fn: () => toast.success(MESSAGES.success.saved) },
+                { label: '❌ Erro', fn: () => toast.error(MESSAGES.errors.saveFailure) },
+                { label: 'ℹ️ Info', fn: () => toast.info('Dica: Use Ctrl+Z para desfazer na lousa.') },
+                { label: '⚠️ Aviso', fn: () => toast.warning(MESSAGES.errors.rateLimit) },
+                { label: '⏳ Loading', fn: () => { const t = toast.loading(MESSAGES.loading.saving); setTimeout(() => t.update(MESSAGES.success.saved), 2000); } },
+                { label: '🔗 Com ação', fn: () => toast.error(MESSAGES.errors.unauthorized, { action: { label: 'Fazer login', onClick: () => {} } }) },
+              ].map(({ label, fn }) => (
+                <button type="button" key={label} onClick={fn} style={{
+                  padding: '5px 10px', borderRadius: 6, fontSize: 11, border: `1px solid ${s('#e5e7eb', '#374151')}`,
+                  background: 'transparent', color: s('#374151', '#d1d5db'), cursor: 'pointer', fontWeight: 500,
+                }}>{label}</button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
