@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import Login from './Login';
+import Health from './pages/Health';
 import Dashboard from './pages/Dashboard';
 import Metodologia from './pages/Metodologia';
 import MacroPlano from './pages/MacroPlano';
@@ -16,7 +17,7 @@ import Modelos from './pages/Modelos';
 import Partidas from './pages/Partidas';
 import {
   Home, BookOpen, Calendar, BarChart2, ClipboardList, Target, BookMarked,
-  FolderOpen, LogOut, Moon, Sun, Menu, X, Users, Sparkles, CalendarDays, Library, Trophy,
+  FolderOpen, LogOut, Moon, Sun, Menu, X, Users, Sparkles, CalendarDays, Library, Trophy, Activity,
 } from 'lucide-react';
 
 const MODULES = [
@@ -38,7 +39,9 @@ const MODULES = [
 export default function FootballApp() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentModule, setCurrentModule] = useState('dashboard');
+  const [currentModule, setCurrentModule] = useState(
+    new URLSearchParams(window.location.search).has('health') ? 'health' : 'dashboard'
+  );
   const [isDark, setIsDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [metodologiaData, setMetodologiaData] = useState(null);
@@ -155,6 +158,13 @@ export default function FootballApp() {
               >
                 <LogOut size={17} /> Sair
               </button>
+              <button
+                type="button"
+                onClick={() => setCurrentModule('health')}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', borderRadius: 9, border: 'none', cursor: 'pointer', background: 'transparent', color: textMuted, fontSize: 12, fontWeight: 500, opacity: 0.6 }}
+              >
+                <Activity size={13} /> Health Check
+              </button>
             </div>
           </>
         )}
@@ -225,6 +235,9 @@ export default function FootballApp() {
               isDark={isDark}
               onAbrirMicro={() => setCurrentModule('micro')}
             />
+          )}
+          {currentModule === 'health' && (
+            <Health isDark={isDark} />
           )}
         </main>
       </div>
