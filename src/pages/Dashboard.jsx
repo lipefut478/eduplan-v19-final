@@ -124,7 +124,7 @@ export default function Dashboard({ session, isDark, onNavigate, metodologia }) 
             ].map((a, i) => {
               const Icon = a.icon;
               return (
-                <button key={i} onClick={() => onNavigate?.(a.mod)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, border: 'none', background: s('#f9fafb', '#111827'), color: s('#374151', '#d1d5db'), cursor: 'pointer', fontWeight: 600, fontSize: 13, textAlign: 'left' }}>
+                <button type="button" key={i} onClick={() => onNavigate?.(a.mod)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, border: 'none', background: s('#f9fafb', '#111827'), color: s('#374151', '#d1d5db'), cursor: 'pointer', fontWeight: 600, fontSize: 13, textAlign: 'left' }}>
                   <Icon size={16} color={a.color} /> {a.label}
                 </button>
               );

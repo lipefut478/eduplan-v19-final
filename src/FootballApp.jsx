@@ -114,6 +114,7 @@ export default function FootballApp() {
                     const active = currentModule === mod.id;
                     return (
                       <button
+        type="button"
                         key={mod.id}
                         onClick={() => setCurrentModule(mod.id)}
                         style={{
@@ -140,6 +141,7 @@ export default function FootballApp() {
                 {session.user.email}
               </div>
               <button
+        type="button"
                 onClick={() => setIsDark(d => !d)}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px', borderRadius: 9, border: 'none', cursor: 'pointer', background: 'transparent', color: textMuted, fontSize: 14, fontWeight: 500, marginBottom: 2 }}
               >
@@ -147,6 +149,7 @@ export default function FootballApp() {
                 {isDark ? 'Modo Claro' : 'Modo Escuro'}
               </button>
               <button
+        type="button"
                 onClick={logout}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px', borderRadius: 9, border: 'none', cursor: 'pointer', background: 'transparent', color: '#dc2626', fontSize: 14, fontWeight: 600 }}
               >
@@ -165,7 +168,7 @@ export default function FootballApp() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <button onClick={() => setSidebarOpen(o => !o)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 8, color: textMuted }}>
+            <button type="button" onClick={() => setSidebarOpen(o => !o)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 8, color: textMuted }}>
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <span style={{ fontWeight: 700, fontSize: 16, color: textPrimary }}>

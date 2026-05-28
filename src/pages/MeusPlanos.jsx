@@ -68,7 +68,7 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
         {TABS.map(t => {
           const Icon = t.icon;
           return (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{
+            <button type="button" key={t.id} onClick={() => setTab(t.id)} style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               padding: '10px 8px', borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13,
               background: tab === t.id ? '#16a34a' : 'transparent',
@@ -90,7 +90,7 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
               <div style={{ fontSize: 13, color: s('#6b7280', '#9ca3af'), marginBottom: 8 }}>{p.categoria} · {p.temporada}</div>
               <div style={{ fontSize: 12, color: s('#9ca3af', '#6b7280'), marginBottom: 12 }}>Criado em {formatDate(p.created_at)}</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => excluir('planos_macro', p.id)} style={btnDanger}><Trash2 size={13} /></button>
+                <button type="button" onClick={() => excluir('planos_macro', p.id)} style={btnDanger}><Trash2 size={13} /></button>
               </div>
             </div>
           ))}
@@ -107,7 +107,7 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
               <div style={{ fontSize: 13, color: s('#6b7280', '#9ca3af'), marginBottom: 4 }}>{p.categoria} · {p.mes_ref}</div>
               <div style={{ fontSize: 12, color: s('#9ca3af', '#6b7280'), marginBottom: 12 }}>{(p.semanas || []).length} semanas · Criado em {formatDate(p.created_at)}</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => excluir('planos_meso', p.id)} style={btnDanger}><Trash2 size={13} /></button>
+                <button type="button" onClick={() => excluir('planos_meso', p.id)} style={btnDanger}><Trash2 size={13} /></button>
               </div>
             </div>
           ))}
@@ -132,8 +132,8 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
                 <span style={badge('#6b7280')}>{formatDate(p.created_at)}</span>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => onAbrirMicro?.(p)} style={btnSuccess}><FolderOpen size={13} /> Abrir</button>
-                <button onClick={() => excluir('planos_treino', p.id)} style={btnDanger}><Trash2 size={13} /></button>
+                <button type="button" onClick={() => onAbrirMicro?.(p)} style={btnSuccess}><FolderOpen size={13} /> Abrir</button>
+                <button type="button" onClick={() => excluir('planos_treino', p.id)} style={btnDanger}><Trash2 size={13} /></button>
               </div>
             </div>
           ))}
@@ -150,7 +150,7 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
               <div style={{ fontSize: 13, color: s('#6b7280', '#9ca3af'), marginBottom: 4 }}>Tipo: {p.tipo_campo}</div>
               <div style={{ fontSize: 12, color: s('#9ca3af', '#6b7280'), marginBottom: 12 }}>Criado em {formatDate(p.created_at)}</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => excluir('lousa_tatica', p.id)} style={btnDanger}><Trash2 size={13} /></button>
+                <button type="button" onClick={() => excluir('lousa_tatica', p.id)} style={btnDanger}><Trash2 size={13} /></button>
               </div>
             </div>
           ))}
@@ -169,7 +169,7 @@ export default function MeusPlanos({ session, isDark, onAbrirMicro }) {
                 {(ex.tags || []).map((t, i) => <span key={i} style={badge('#16a34a')}>{t}</span>)}
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => excluir('exercicios', ex.id)} style={btnDanger}><Trash2 size={13} /></button>
+                <button type="button" onClick={() => excluir('exercicios', ex.id)} style={btnDanger}><Trash2 size={13} /></button>
               </div>
             </div>
           ))}

@@ -175,7 +175,7 @@ export default function Metodologia({ session, isDark, onSaved }) {
                 background: '#dcfce7', color: '#15803d', borderRadius: 20, padding: '4px 12px', fontSize: 13, fontWeight: 600,
               }}>
                 {p}
-                <button onClick={() => removePilar(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+                <button type="button" onClick={() => removePilar(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
                   <X size={12} color="#15803d" />
                 </button>
               </span>
@@ -189,7 +189,7 @@ export default function Metodologia({ session, isDark, onSaved }) {
               onKeyDown={e => e.key === 'Enter' && addPilar()}
               placeholder="Ex: Pressing alto, Posse de bola, Identidade ofensiva..."
             />
-            <button onClick={addPilar} style={{
+            <button type="button" onClick={addPilar} style={{
               padding: '10px 16px', borderRadius: 8, background: '#16a34a', color: '#fff',
               border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600,
             }}>
@@ -227,6 +227,7 @@ export default function Metodologia({ session, isDark, onSaved }) {
       </div>
 
       <button
+        type="button"
         onClick={salvar}
         disabled={saving}
         style={{

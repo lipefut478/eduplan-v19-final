@@ -67,11 +67,11 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
           <p style={{ fontSize: 14, color: s('#6b7280', '#9ca3af') }}>Visualize treinos planejados e crie eventos.</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => setData(new Date(ano, mes - 1, 1))} style={{ padding: 8, background: s('#fff', '#1f2937'), border: `1px solid ${s('#e5e7eb', '#374151')}`, borderRadius: 8, cursor: 'pointer' }}>
+          <button type="button" onClick={() => setData(new Date(ano, mes - 1, 1))} style={{ padding: 8, background: s('#fff', '#1f2937'), border: `1px solid ${s('#e5e7eb', '#374151')}`, borderRadius: 8, cursor: 'pointer' }}>
             <ChevronLeft size={18} color={s('#374151', '#d1d5db')} />
           </button>
           <span style={{ fontSize: 16, fontWeight: 700, color: s('#111827', '#f3f4f6'), minWidth: 180, textAlign: 'center' }}>{MESES[mes]} {ano}</span>
-          <button onClick={() => setData(new Date(ano, mes + 1, 1))} style={{ padding: 8, background: s('#fff', '#1f2937'), border: `1px solid ${s('#e5e7eb', '#374151')}`, borderRadius: 8, cursor: 'pointer' }}>
+          <button type="button" onClick={() => setData(new Date(ano, mes + 1, 1))} style={{ padding: 8, background: s('#fff', '#1f2937'), border: `1px solid ${s('#e5e7eb', '#374151')}`, borderRadius: 8, cursor: 'pointer' }}>
             <ChevronRight size={18} color={s('#374151', '#d1d5db')} />
           </button>
         </div>
@@ -124,10 +124,10 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
               {diaSelecionado} de {MESES[mes]} de {ano}
             </h2>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setNovoEvento({ data: dataStr(diaSelecionado), titulo: '', descricao: '', tipo: 'reuniao' })} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: '#1d4ed8', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>
+              <button type="button" onClick={() => setNovoEvento({ data: dataStr(diaSelecionado), titulo: '', descricao: '', tipo: 'reuniao' })} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: '#1d4ed8', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>
                 <Plus size={14} /> Evento
               </button>
-              <button onClick={() => setDiaSelecionado(null)} style={{ padding: 8, background: 'none', border: 'none', cursor: 'pointer' }}>
+              <button type="button" onClick={() => setDiaSelecionado(null)} style={{ padding: 8, background: 'none', border: 'none', cursor: 'pointer' }}>
                 <X size={18} color={s('#6b7280', '#9ca3af')} />
               </button>
             </div>
@@ -147,9 +147,9 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
                     </div>
                   </div>
                   {it._tipo === 'treino' ? (
-                    <button onClick={() => onAbrirMicro?.()} style={{ padding: '6px 12px', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Ir</button>
+                    <button type="button" onClick={() => onAbrirMicro?.()} style={{ padding: '6px 12px', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Ir</button>
                   ) : (
-                    <button onClick={() => excluirEvento(it.id)} style={{ padding: '6px 12px', borderRadius: 7, background: '#fee2e2', color: '#dc2626', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Excluir</button>
+                    <button type="button" onClick={() => excluirEvento(it.id)} style={{ padding: '6px 12px', borderRadius: 7, background: '#fee2e2', color: '#dc2626', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Excluir</button>
                   )}
                 </div>
               ))}
@@ -186,8 +186,8 @@ export default function Calendario({ session, isDark, onAbrirMicro }) {
               <option value="outro">Outro</option>
             </select>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => adicionarEvento(novoEvento)} style={{ flex: 1, padding: '10px 20px', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>Salvar</button>
-              <button onClick={() => setNovoEvento(null)} style={{ padding: '10px 20px', borderRadius: 8, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+              <button type="button" onClick={() => adicionarEvento(novoEvento)} style={{ flex: 1, padding: '10px 20px', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>Salvar</button>
+              <button type="button" onClick={() => setNovoEvento(null)} style={{ padding: '10px 20px', borderRadius: 8, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
             </div>
           </div>
         </div>

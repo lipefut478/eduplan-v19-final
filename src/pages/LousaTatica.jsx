@@ -256,10 +256,10 @@ export default function LousaTatica({ session, isDark }) {
           />
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={exportarPNG} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, background: '#1d4ed8', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+          <button type="button" onClick={exportarPNG} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, background: '#1d4ed8', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
             <Download size={16} /> PNG
           </button>
-          <button onClick={salvarNuvem} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+          <button type="button" onClick={salvarNuvem} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
             <Save size={16} /> {saving ? 'Salvando...' : 'Salvar'}
           </button>
         </div>
@@ -270,7 +270,7 @@ export default function LousaTatica({ session, isDark }) {
         {/* Tipo de campo */}
         <div style={{ display: 'flex', gap: 4 }}>
           {Object.entries(CAMPO_TIPOS).map(([k, v]) => (
-            <button key={k} onClick={() => { setTipoCampo(k); setFormA(FORMACAO_OPTIONS[k][0]); setFormB(FORMACAO_OPTIONS[k][0]); }} style={btnTool(tipoCampo === k, '#15803d')}>
+            <button type="button" key={k} onClick={() => { setTipoCampo(k); setFormA(FORMACAO_OPTIONS[k][0]); setFormB(FORMACAO_OPTIONS[k][0]); }} style={btnTool(tipoCampo === k, '#15803d')}>
               {v.label.split(' ')[0]}
             </button>
           ))}
@@ -295,7 +295,7 @@ export default function LousaTatica({ session, isDark }) {
         {/* Ferramentas de desenho */}
         <div style={{ display: 'flex', gap: 4 }}>
           {ferramentas.map(f => (
-            <button key={f.id} onClick={() => setFerramenta(f.id)} style={btnTool(ferramenta === f.id, f.id === 'apagar' ? '#dc2626' : '#16a34a')} title={f.label}>
+            <button type="button" key={f.id} onClick={() => setFerramenta(f.id)} style={btnTool(ferramenta === f.id, f.id === 'apagar' ? '#dc2626' : '#16a34a')} title={f.label}>
               {f.icon}
             </button>
           ))}
@@ -305,14 +305,14 @@ export default function LousaTatica({ session, isDark }) {
         {/* Cor */}
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           {CORES.map(c => (
-            <button key={c} onClick={() => setCorAtiva(c)} style={{
+            <button type="button" key={c} onClick={() => setCorAtiva(c)} style={{
               width: 22, height: 22, borderRadius: '50%', background: c, border: `2px solid ${corAtiva === c ? '#16a34a' : s('#d1d5db', '#374151')}`, cursor: 'pointer',
             }} />
           ))}
         </div>
         <span style={{ color: s('#d1d5db', '#4b5563') }}>|</span>
 
-        <button onClick={desfazer} style={{ ...btnTool(false), padding: '6px 10px' }} title="Desfazer">
+        <button type="button" onClick={desfazer} style={{ ...btnTool(false), padding: '6px 10px' }} title="Desfazer">
           <RotateCcw size={14} />
         </button>
       </div>

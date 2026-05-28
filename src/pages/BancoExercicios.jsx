@@ -23,7 +23,7 @@ function ExercicioModal({ exercicio, isDark, onClose, onSave }) {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
       <div style={{ background: s('#fff', '#1f2937'), borderRadius: 16, padding: 28, width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={s('#6b7280', '#9ca3af')} /></button>
+        <button type="button" onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={s('#6b7280', '#9ca3af')} /></button>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: s('#111827', '#f3f4f6'), marginBottom: 20 }}>
           {exercicio ? 'Editar Exercício' : 'Novo Exercício'}
         </h2>
@@ -71,7 +71,7 @@ function ExercicioModal({ exercicio, isDark, onClose, onSave }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
               {form.objetivos.map((o, i) => (
                 <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#dbeafe', color: '#1d4ed8', borderRadius: 20, padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>
-                  {o} <button onClick={() => setForm(f => ({ ...f, objetivos: f.objetivos.filter((_, idx) => idx !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><X size={11} color="#1d4ed8" /></button>
+                  {o} <button type="button" onClick={() => setForm(f => ({ ...f, objetivos: f.objetivos.filter((_, idx) => idx !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><X size={11} color="#1d4ed8" /></button>
                 </span>
               ))}
             </div>
@@ -85,7 +85,7 @@ function ExercicioModal({ exercicio, isDark, onClose, onSave }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
               {form.tags.map((t, i) => (
                 <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#dcfce7', color: '#15803d', borderRadius: 20, padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>
-                  {t} <button onClick={() => setForm(f => ({ ...f, tags: f.tags.filter((_, idx) => idx !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><X size={11} color="#15803d" /></button>
+                  {t} <button type="button" onClick={() => setForm(f => ({ ...f, tags: f.tags.filter((_, idx) => idx !== i) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><X size={11} color="#15803d" /></button>
                 </span>
               ))}
             </div>
@@ -96,10 +96,10 @@ function ExercicioModal({ exercicio, isDark, onClose, onSave }) {
         </div>
 
         <div style={{ display: 'flex', gap: 12 }}>
-          <button onClick={() => onSave(form)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
+          <button type="button" onClick={() => onSave(form)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
             <Save size={18} /> Salvar Exercício
           </button>
-          <button onClick={onClose} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+          <button type="button" onClick={onClose} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
         </div>
       </div>
     </div>
@@ -209,7 +209,7 @@ export default function BancoExercicios({ session, isDark }) {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: s('#111827', '#f3f4f6'), marginBottom: 4 }}>Banco de Exercícios</h1>
           <p style={{ fontSize: 14, color: s('#6b7280', '#9ca3af') }}>Seus exercícios personalizados — {lista.length} cadastrado{lista.length !== 1 ? 's' : ''}.</p>
         </div>
-        <button onClick={() => setModal('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+        <button type="button" onClick={() => setModal('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
           <Plus size={18} /> Novo Exercício
         </button>
       </div>
@@ -229,6 +229,7 @@ export default function BancoExercicios({ session, isDark }) {
           {BLOCOS_TREINO.map(b => <option key={b.id} value={b.id}>{b.nome}</option>)}
         </select>
         <button
+        type="button"
           onClick={() => setFiltroFav(f => !f)}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, background: filtroFav ? '#ca8a04' : s('#f3f4f6', '#374151'), color: filtroFav ? '#fff' : s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}
         >
@@ -255,7 +256,7 @@ export default function BancoExercicios({ session, isDark }) {
                       {ex.duracao_sugerida && <span style={{ fontSize: 11, background: s('#f3f4f6', '#374151'), color: s('#6b7280', '#9ca3af'), borderRadius: 12, padding: '2px 8px' }}>{ex.duracao_sugerida}min</span>}
                     </div>
                   </div>
-                  <button onClick={() => toggleFav(ex)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+                  <button type="button" onClick={() => toggleFav(ex)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
                     <Star size={18} color="#ca8a04" fill={ex.favorito ? '#ca8a04' : 'none'} />
                   </button>
                 </div>
@@ -273,10 +274,10 @@ export default function BancoExercicios({ session, isDark }) {
                 )}
 
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  <button onClick={() => setModal(ex)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}><Edit3 size={13} /> Editar</button>
-                  <button onClick={() => exportarPDF(ex)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: 7, background: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}><FileText size={13} /> PDF</button>
-                  <button onClick={() => exportarWord(ex)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: 7, background: '#1d4ed8', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}><FileText size={13} /> Word</button>
-                  <button onClick={() => excluir(ex.id)} style={{ padding: '6px 10px', borderRadius: 7, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
+                  <button type="button" onClick={() => setModal(ex)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}><Edit3 size={13} /> Editar</button>
+                  <button type="button" onClick={() => exportarPDF(ex)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: 7, background: '#dc2626', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}><FileText size={13} /> PDF</button>
+                  <button type="button" onClick={() => exportarWord(ex)} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: 7, background: '#1d4ed8', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}><FileText size={13} /> Word</button>
+                  <button type="button" onClick={() => excluir(ex.id)} style={{ padding: '6px 10px', borderRadius: 7, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
                 </div>
               </div>
             );

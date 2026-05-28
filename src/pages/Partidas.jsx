@@ -35,7 +35,7 @@ function PartidaModal({ partida, isDark, onClose, onSave }) {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
       <div style={{ background: s('#fff', '#1f2937'), borderRadius: 16, padding: 28, width: '100%', maxWidth: 600, maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={s('#6b7280', '#9ca3af')} /></button>
+        <button type="button" onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={s('#6b7280', '#9ca3af')} /></button>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: s('#111827', '#f3f4f6'), marginBottom: 20 }}>{partida ? 'Editar Partida' : 'Nova Partida'}</h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
@@ -92,10 +92,10 @@ function PartidaModal({ partida, isDark, onClose, onSave }) {
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={salvar} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+          <button type="button" onClick={salvar} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
             <Save size={16} /> Salvar Partida
           </button>
-          <button onClick={onClose} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+          <button type="button" onClick={onClose} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
         </div>
       </div>
     </div>
@@ -154,7 +154,7 @@ export default function Partidas({ session, isDark }) {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: s('#111827', '#f3f4f6'), marginBottom: 4 }}>Partidas</h1>
           <p style={{ fontSize: 14, color: s('#6b7280', '#9ca3af') }}>Registro de jogos, resultados e scouting</p>
         </div>
-        <button onClick={() => setModal('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+        <button type="button" onClick={() => setModal('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
           <Plus size={18} /> Nova Partida
         </button>
       </div>
@@ -185,7 +185,7 @@ export default function Partidas({ session, isDark }) {
           const cfg = RESULTADOS.find(r => r.id === f);
           const ativo = filtro === f;
           return (
-            <button key={f} onClick={() => setFiltro(f)} style={{
+            <button type="button" key={f} onClick={() => setFiltro(f)} style={{
               padding: '6px 14px', borderRadius: 16, fontSize: 12, fontWeight: 700, cursor: 'pointer',
               background: ativo ? (cfg?.cor || '#16a34a') : s('#f3f4f6', '#374151'),
               color: ativo ? '#fff' : s('#374151', '#d1d5db'), border: 'none',
@@ -223,8 +223,8 @@ export default function Partidas({ session, isDark }) {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button onClick={() => setModal(p)} style={{ padding: '6px 14px', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Editar</button>
-                    <button onClick={() => excluir(p.id)} style={{ padding: '6px 10px', borderRadius: 7, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
+                    <button type="button" onClick={() => setModal(p)} style={{ padding: '6px 14px', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Editar</button>
+                    <button type="button" onClick={() => excluir(p.id)} style={{ padding: '6px 10px', borderRadius: 7, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
                   </div>
                 </div>
               </div>

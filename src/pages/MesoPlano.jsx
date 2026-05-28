@@ -74,7 +74,7 @@ export default function MesoPlano({ session, isDark, metodologia }) {
           <p style={{ color: s('#6b7280', '#9ca3af'), fontSize: 14 }}>Ciclos mensais de treino vinculados ao plano macro.</p>
         </div>
         {!editando && (
-          <button onClick={() => setEditando('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+          <button type="button" onClick={() => setEditando('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
             <Plus size={18} /> Novo Plano Meso
           </button>
         )}
@@ -170,10 +170,10 @@ export default function MesoPlano({ session, isDark, metodologia }) {
           </div>
 
           <div style={{ display: 'flex', gap: 12 }}>
-            <button onClick={salvar} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
+            <button type="button" onClick={salvar} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
               <Save size={18} /> {saving ? 'Salvando...' : 'Salvar Plano Meso'}
             </button>
-            <button onClick={() => setEditando(null)} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+            <button type="button" onClick={() => setEditando(null)} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
           </div>
         </div>
       )}
@@ -191,8 +191,8 @@ export default function MesoPlano({ session, isDark, metodologia }) {
               <div style={{ fontSize: 13, color: s('#6b7280', '#9ca3af'), marginBottom: 4 }}>{p.categoria} — {p.mes_ref}</div>
               <div style={{ fontSize: 12, color: s('#9ca3af', '#6b7280'), marginBottom: 12 }}>{(p.semanas || []).length} semanas</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => abrirEditar(p)} style={{ flex: 1, padding: '8px 0', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>Editar</button>
-                <button onClick={() => excluir(p.id)} style={{ padding: '8px 12px', borderRadius: 8, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={14} /></button>
+                <button type="button" onClick={() => abrirEditar(p)} style={{ flex: 1, padding: '8px 0', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>Editar</button>
+                <button type="button" onClick={() => excluir(p.id)} style={{ padding: '8px 12px', borderRadius: 8, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={14} /></button>
               </div>
             </div>
           ))}

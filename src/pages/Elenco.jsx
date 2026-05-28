@@ -26,7 +26,7 @@ function JogadorModal({ jogador, isDark, onClose, onSave }) {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
       <div style={{ background: s('#fff', '#1f2937'), borderRadius: 16, padding: 28, width: '100%', maxWidth: 600, maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={s('#6b7280', '#9ca3af')} /></button>
+        <button type="button" onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} color={s('#6b7280', '#9ca3af')} /></button>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: s('#111827', '#f3f4f6'), marginBottom: 20 }}>{jogador ? 'Editar Jogador' : 'Novo Jogador'}</h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12, marginBottom: 14 }}>
@@ -81,10 +81,10 @@ function JogadorModal({ jogador, isDark, onClose, onSave }) {
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={() => onSave(form)} disabled={!form.nome} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: form.nome ? 'pointer' : 'not-allowed', fontWeight: 700, fontSize: 14, opacity: form.nome ? 1 : 0.5 }}>
+          <button type="button" onClick={() => onSave(form)} disabled={!form.nome} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: form.nome ? 'pointer' : 'not-allowed', fontWeight: 700, fontSize: 14, opacity: form.nome ? 1 : 0.5 }}>
             <Save size={16} /> Salvar
           </button>
-          <button onClick={onClose} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
+          <button type="button" onClick={onClose} style={{ padding: '12px 20px', borderRadius: 10, background: s('#f3f4f6', '#374151'), color: s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cancelar</button>
         </div>
       </div>
     </div>
@@ -138,7 +138,7 @@ export default function Elenco({ session, isDark }) {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: s('#111827', '#f3f4f6'), marginBottom: 4 }}>Elenco</h1>
           <p style={{ fontSize: 14, color: s('#6b7280', '#9ca3af') }}>{lista.length} jogador{lista.length !== 1 ? 'es' : ''} no elenco</p>
         </div>
-        <button onClick={() => setModal('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+        <button type="button" onClick={() => setModal('novo')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', borderRadius: 10, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
           <Plus size={18} /> Adicionar Jogador
         </button>
       </div>
@@ -186,8 +186,8 @@ export default function Elenco({ session, isDark }) {
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button onClick={() => setModal(j)} style={{ flex: 1, padding: '7px 0', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Editar</button>
-                  <button onClick={() => excluir(j.id)} style={{ padding: '7px 12px', borderRadius: 7, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
+                  <button type="button" onClick={() => setModal(j)} style={{ flex: 1, padding: '7px 0', borderRadius: 7, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12 }}>Editar</button>
+                  <button type="button" onClick={() => excluir(j.id)} style={{ padding: '7px 12px', borderRadius: 7, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer' }}><Trash2 size={13} /></button>
                 </div>
               </div>
             );

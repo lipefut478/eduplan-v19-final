@@ -385,12 +385,14 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button
+        type="button"
               onClick={() => { if (!config.escola || !config.treinador) return alert('Preencha escola e treinador.'); setStep(1); }}
               style={btnPrimary}
             >
               Iniciar Planejamento Manual <ArrowRight size={18} />
             </button>
             <button
+        type="button"
               onClick={() => { if (!config.escola || !config.treinador || !config.tema) return alert('Preencha escola, treinador e tema.'); gerarComIA(); }}
               disabled={gerando}
               style={{ ...btnPrimary, background: '#1d4ed8' }}
@@ -434,6 +436,7 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
                 const Icon = ICONS[b.icone] || Target;
                 return (
                   <button
+        type="button"
                     key={b.id}
                     onClick={() => setBlocoAtual(i)}
                     style={{
@@ -473,6 +476,7 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
                   </div>
                 </div>
                 <button
+        type="button"
                   onClick={() => togglePular(blocoAtual)}
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: bloco.pulado ? '#fee2e2' : s('#f3f4f6', '#374151'), color: bloco.pulado ? '#dc2626' : s('#6b7280', '#9ca3af'), border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}
                 >
@@ -490,6 +494,7 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
                         const sel = bloco.objetivos.includes(obj);
                         return (
                           <button
+        type="button"
                             key={i}
                             onClick={() => toggleObjetivo(blocoAtual, obj)}
                             style={{
@@ -521,10 +526,11 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
                                 <div style={{ fontWeight: 700, fontSize: 13, color: s('#111827', '#f3f4f6') }}>{ativ.titulo}</div>
                                 <div style={{ fontSize: 12, color: s('#6b7280', '#9ca3af') }}>{ativ.duracao_sugerida} min · {(ativ.tags || []).slice(0, 2).join(', ')}</div>
                               </div>
-                              <button onClick={() => setExpandido(ex => ({ ...ex, [`${blocoAtual}-${i}`]: !isExpanded }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+                              <button type="button" onClick={() => setExpandido(ex => ({ ...ex, [`${blocoAtual}-${i}`]: !isExpanded }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
                                 {isExpanded ? <ChevronUp size={16} color={s('#6b7280', '#9ca3af')} /> : <ChevronDown size={16} color={s('#6b7280', '#9ca3af')} />}
                               </button>
                               <button
+        type="button"
                                 onClick={() => selecionarAtividade(blocoAtual, ativ)}
                                 style={{ padding: '6px 14px', borderRadius: 8, background: sel ? blocoInfo.corHex : s('#e5e7eb', '#374151'), color: sel ? '#fff' : s('#374151', '#d1d5db'), border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}
                               >
@@ -554,7 +560,7 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
                         {bloco.atividadesSelecionadas.map((a, i) => (
                           <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: blocoInfo.corHex, color: '#fff', borderRadius: 20, padding: '6px 14px', fontSize: 13, fontWeight: 600 }}>
                             {a.titulo}
-                            <button onClick={() => selecionarAtividade(blocoAtual, a)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+                            <button type="button" onClick={() => selecionarAtividade(blocoAtual, a)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
                               <X size={13} color="#fff" />
                             </button>
                           </span>
@@ -579,8 +585,8 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
 
             {/* Navegação */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button onClick={prevBloco} style={btnSecondary}><ArrowLeft size={18} /> Anterior</button>
-              <button onClick={nextBloco} style={btnPrimary}>
+              <button type="button" onClick={prevBloco} style={btnSecondary}><ArrowLeft size={18} /> Anterior</button>
+              <button type="button" onClick={nextBloco} style={btnPrimary}>
                 {blocoAtual === BLOCOS_TREINO.length - 1 ? 'Finalizar' : 'Próximo'} <ArrowRight size={18} />
               </button>
             </div>
@@ -645,12 +651,12 @@ export default function MicroPlano({ session, isDark, metodologia, preset, onPre
       </div>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
-        <button onClick={gerarPDF} style={{ ...btnPrimary, background: '#dc2626' }}><FileText size={18} /> Exportar PDF</button>
-        <button onClick={gerarWord} style={{ ...btnPrimary, background: '#1d4ed8' }}><FileText size={18} /> Exportar Word</button>
-        <button onClick={salvar} disabled={saving} style={btnPrimary}><Save size={18} /> {saving ? 'Salvando...' : 'Salvar na Nuvem'}</button>
+        <button type="button" onClick={gerarPDF} style={{ ...btnPrimary, background: '#dc2626' }}><FileText size={18} /> Exportar PDF</button>
+        <button type="button" onClick={gerarWord} style={{ ...btnPrimary, background: '#1d4ed8' }}><FileText size={18} /> Exportar Word</button>
+        <button type="button" onClick={salvar} disabled={saving} style={btnPrimary}><Save size={18} /> {saving ? 'Salvando...' : 'Salvar na Nuvem'}</button>
       </div>
 
-      <button onClick={() => setStep(1)} style={btnSecondary}><ArrowLeft size={18} /> Voltar ao Planejamento</button>
+      <button type="button" onClick={() => setStep(1)} style={btnSecondary}><ArrowLeft size={18} /> Voltar ao Planejamento</button>
     </div>
   );
 }

@@ -132,13 +132,13 @@ export default function Modelos({ session, isDark, onUsar }) {
                 </span>
               </div>
               {!m.sistema && (
-                <button onClick={() => excluir(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}><Trash2 size={14} color="#dc2626" /></button>
+                <button type="button" onClick={() => excluir(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}><Trash2 size={14} color="#dc2626" /></button>
               )}
             </div>
             <div style={{ fontWeight: 700, fontSize: 15, color: s('#111827', '#f3f4f6'), marginBottom: 4 }}>{m.nome}</div>
             <div style={{ fontSize: 12, color: s('#6b7280', '#9ca3af'), marginBottom: 8 }}>{m.categoria} · {m.duracao}min</div>
             <div style={{ fontSize: 13, color: s('#374151', '#d1d5db'), marginBottom: 12, lineHeight: 1.4 }}>{m.tema}</div>
-            <button onClick={() => usarModelo(m)} style={{ width: '100%', padding: '8px 0', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <button type="button" onClick={() => usarModelo(m)} style={{ width: '100%', padding: '8px 0', borderRadius: 8, background: '#16a34a', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <Copy size={14} /> Usar Modelo
             </button>
           </div>

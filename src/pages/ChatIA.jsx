@@ -85,7 +85,7 @@ export default function ChatIA({ session, isDark, metodologia }) {
           </h1>
           <p style={{ fontSize: 13, color: s('#6b7280', '#9ca3af') }}>Pergunte qualquer coisa sobre futebol e treinamento</p>
         </div>
-        <button onClick={limpar} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>
+        <button type="button" onClick={limpar} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: s('#fee2e2', '#7f1d1d'), color: '#dc2626', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>
           <Trash2 size={14} /> Limpar
         </button>
       </div>
@@ -129,7 +129,7 @@ export default function ChatIA({ session, isDark, metodologia }) {
       {mensagens.length <= 1 && (
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
           {PROMPTS_RAPIDOS.map(p => (
-            <button key={p} onClick={() => enviar(p)} style={{
+            <button type="button" key={p} onClick={() => enviar(p)} style={{
               padding: '6px 12px', borderRadius: 16, fontSize: 12, background: s('#dcfce7', '#052e16'),
               color: '#15803d', border: 'none', cursor: 'pointer', fontWeight: 500,
             }}>{p}</button>
@@ -146,7 +146,7 @@ export default function ChatIA({ session, isDark, metodologia }) {
           rows={2}
           style={{ flex: 1, padding: '12px 16px', borderRadius: 12, fontSize: 14, background: s('#fff', '#1f2937'), color: s('#111827', '#f3f4f6'), border: `1px solid ${s('#d1d5db', '#374151')}`, outline: 'none', resize: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
         />
-        <button onClick={() => enviar()} disabled={enviando || !input.trim()} style={{ padding: '12px 20px', borderRadius: 12, background: '#1d4ed8', color: '#fff', border: 'none', cursor: enviando ? 'not-allowed' : 'pointer', fontWeight: 700, opacity: enviando ? 0.5 : 1, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button type="button" onClick={() => enviar()} disabled={enviando || !input.trim()} style={{ padding: '12px 20px', borderRadius: 12, background: '#1d4ed8', color: '#fff', border: 'none', cursor: enviando ? 'not-allowed' : 'pointer', fontWeight: 700, opacity: enviando ? 0.5 : 1, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Send size={16} />
         </button>
       </div>
